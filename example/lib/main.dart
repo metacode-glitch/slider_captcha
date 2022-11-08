@@ -37,14 +37,20 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 50),
           child: SliderCaptcha(
             controller: controller,
             image: Image.asset(
               'assets/image.jpeg',
               fit: BoxFit.fitWidth,
             ),
-            colorBar: Colors.blue,
+            title: "",
+            sliderOffsetY: 20,
+            sliderButtonSize: 45,
+            sliderSize: 32,
+            colorBar: const Color(0xfff1f2fc),
+            colorButton: Colors.white,
+            colorArrow: const Color(0xff6c55fb),
             colorCaptChar: Colors.blue,
             onConfirm: (value) async {
               debugPrint(value.toString());

@@ -16,7 +16,12 @@ class SliderCaptcha extends StatefulWidget {
     this.title = 'Slide to authenticate',
     this.titleStyle,
     this.captchaSize = 30,
+    this.sliderOffsetY = 10,
+    this.sliderButtonSize = 45,
+    this.sliderSize = 32,
     this.colorBar = Colors.red,
+    this.colorButton = Colors.white,
+    this.colorArrow = Colors.black,
     this.colorCaptChar = Colors.blue,
     this.controller,
     Key? key,
@@ -32,19 +37,32 @@ class SliderCaptcha extends StatefulWidget {
 
   final Color colorBar;
 
+  final Color colorButton;
+
+  final Color colorArrow;
+
   final Color colorCaptChar;
 
   final double captchaSize;
 
+  final double sliderOffsetY;
+
+  final double sliderButtonSize;
+
+  final double sliderSize;
+
   final SliderController? controller;
 
   @override
-  State<SliderCaptcha> createState() => _SliderCaptchaState();
+  State<SliderCaptcha> createState() =>
+      _SliderCaptchaState(heightSliderBar: sliderSize);
 }
 
 class _SliderCaptchaState extends State<SliderCaptcha>
     with SingleTickerProviderStateMixin {
-  double heightSliderBar = 50;
+  _SliderCaptchaState({required this.heightSliderBar}) : super();
+
+  double heightSliderBar = 20;
 
   double _offsetMove = 0;
 
@@ -66,9 +84,9 @@ class _SliderCaptchaState extends State<SliderCaptcha>
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 500),
+      constraints: BoxConstraints(maxWidth: double.infinity),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           TestSliderCaptChar(
@@ -78,22 +96,29 @@ class _SliderCaptchaState extends State<SliderCaptcha>
             colorCaptChar: widget.colorCaptChar,
             sliderController: _controller,
           ),
-          Container(
-            height: heightSliderBar,
+          SizedBox(
+            height: widget.sliderOffsetY,
+          ),
+          SizedBox(
             width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: widget.colorBar,
-              boxShadow: const <BoxShadow>[
-                BoxShadow(
-                  offset: Offset(0, 0),
-                  blurRadius: 2,
-                  color: Colors.grey,
-                )
-              ],
-            ),
+            height: widget.sliderButtonSize,
             child: Stack(
-              children: <Widget>[
+              alignment: Alignment.centerLeft,
+              children: [
+                Container(
+                    height: heightSliderBar,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: widget.colorBar,
+                      boxShadow: const <BoxShadow>[
+                        BoxShadow(
+                          offset: Offset(0, 0),
+                          blurRadius: 2,
+                          color: Colors.grey,
+                        )
+                      ],
+                    )),
                 Center(
                   child: Text(
                     widget.title,
@@ -104,10 +129,11 @@ class _SliderCaptchaState extends State<SliderCaptcha>
                 Positioned(
                   left: _offsetMove,
                   top: 0,
-                  height: 50,
-                  width: 50,
+                  height: widget.sliderButtonSize,
+                  width: widget.sliderButtonSize,
                   child: GestureDetector(
-                    onHorizontalDragStart: (detail) => _onDragStart(context, detail),
+                    onHorizontalDragStart: (detail) =>
+                        _onDragStart(context, detail),
                     onHorizontalDragUpdate: (DragUpdateDetails detail) {
                       _onDragUpdate(context, detail);
                     },
@@ -115,23 +141,24 @@ class _SliderCaptchaState extends State<SliderCaptcha>
                       checkAnswer();
                     },
                     child: Container(
-                      height: heightSliderBar,
-                      width: heightSliderBar,
-                      margin: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.white,
-                        boxShadow: const <BoxShadow>[
-                          BoxShadow(color: Colors.grey, blurRadius: 4)
-                        ],
-                      ),
-                      child: const Icon(Icons.arrow_forward_rounded),
-                    ),
+                        //margin: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          //borderRadius: BorderRadius.circular(2),
+                          shape: BoxShape.circle,
+                          color: widget.colorButton,
+                          boxShadow: const <BoxShadow>[
+                            BoxShadow(color: Colors.grey, blurRadius: 4)
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward_rounded,
+                          color: widget.colorArrow,
+                        )),
                   ),
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -181,8 +208,6 @@ class _SliderCaptchaState extends State<SliderCaptcha>
 
     controller.create = create;
 
-
-
     animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -199,7 +224,6 @@ class _SliderCaptchaState extends State<SliderCaptcha>
           animationController.reset();
         }
       });
-
   }
 
   @override
@@ -208,10 +232,9 @@ class _SliderCaptchaState extends State<SliderCaptcha>
     super.dispose();
   }
 
-
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp){
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       controller.create.call();
     });
     super.didChangeDependencies();
@@ -224,7 +247,7 @@ class _SliderCaptchaState extends State<SliderCaptcha>
   }
 
   Future<void> checkAnswer() async {
-    if(isLock) return;
+    if (isLock) return;
     isLock = true;
 
     if (_offsetMove < answerX + 10 && _offsetMove > answerX - 10) {
@@ -301,7 +324,6 @@ class TestSliderCaptChar extends SingleChildRenderObjectWidget {
 }
 
 class _RenderTestSliderCaptChar extends RenderProxyBox {
-
   /// Kích thước của khối bloc
   double sizeCaptChar = 40;
 
@@ -316,6 +338,7 @@ class _RenderTestSliderCaptChar extends RenderProxyBox {
 
   /// kết quả: dx
   double createX = 0;
+
   /// kết quả: dy
   double createY = 0;
 
@@ -328,9 +351,9 @@ class _RenderTestSliderCaptChar extends RenderProxyBox {
 
     /// Vẽ hình background.
     context.paintChild(child!, offset);
+
     /// Khử trường hợp ảnh bị giật khi sử dụng WidgetsBinding.instance.addPostFrameCallback
     if (!(child!.size.width > 0 && child!.size.height > 0)) {
-
       return;
     }
 
@@ -339,7 +362,6 @@ class _RenderTestSliderCaptChar extends RenderProxyBox {
       ..strokeWidth = strokeWidth;
 
     if (createX == 0 && createY == 0) return;
-
 
     context.canvas.drawPath(
       getPiecePathCustom(
@@ -353,7 +375,7 @@ class _RenderTestSliderCaptChar extends RenderProxyBox {
 
     context.canvas.drawPath(
       getPiecePathCustom(
-        Size(size.width- strokeWidth, size.height - strokeWidth),
+        Size(size.width - strokeWidth, size.height - strokeWidth),
         strokeWidth + offset.dx + offsetX,
         offset.dy + createY,
         sizeCaptChar,
@@ -394,7 +416,6 @@ class _RenderTestSliderCaptChar extends RenderProxyBox {
 
   /// Hàm khởi tạo kết quả của khối bloc
   Offset? create() {
-
     if (size == Size.zero) {
       return null;
     }
