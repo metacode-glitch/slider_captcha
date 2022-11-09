@@ -19,6 +19,7 @@ class SliderCaptcha extends StatefulWidget {
     this.sliderOffsetY = 10,
     this.sliderButtonSize = 45,
     this.sliderSize = 32,
+    this.sliderCircular = 10,
     this.colorBar = Colors.red,
     this.colorButton = Colors.white,
     this.colorArrow = Colors.black,
@@ -50,6 +51,8 @@ class SliderCaptcha extends StatefulWidget {
   final double sliderButtonSize;
 
   final double sliderSize;
+
+  final double sliderCircular;
 
   final SliderController? controller;
 
@@ -109,7 +112,8 @@ class _SliderCaptchaState extends State<SliderCaptcha>
                     height: heightSliderBar,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius:
+                          BorderRadius.circular(widget.sliderCircular),
                       color: widget.colorBar,
                       boxShadow: const <BoxShadow>[
                         BoxShadow(

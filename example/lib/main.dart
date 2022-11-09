@@ -48,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
             sliderOffsetY: 20,
             sliderButtonSize: 45,
             sliderSize: 32,
+            sliderCircular: 999,
             colorBar: const Color(0xfff1f2fc),
             colorButton: Colors.white,
             colorArrow: const Color(0xff6c55fb),
